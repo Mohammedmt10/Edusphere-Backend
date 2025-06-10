@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+const jwt = require("jsonwebtoken")
 import { secret } from "./config";
 
 export async function authMiddleware(req : Request , res : Response , next : NextFunction) {
