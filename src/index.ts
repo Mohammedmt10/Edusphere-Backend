@@ -11,7 +11,7 @@ import { lectureModel } from './db';
 import axios from 'axios';
 import Stripe from 'stripe';
 
-
+const port = 3000;
 const app = express();
 
 dotenv.config();
@@ -589,4 +589,4 @@ app.get('/getAdminCourses' , authMiddleware , async (req , res) => {
     
 });
 
-app.listen(3000);
+app.listen(port);
