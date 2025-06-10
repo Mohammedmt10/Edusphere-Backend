@@ -5,6 +5,7 @@ import { secret } from "./config";
 export async function authMiddleware(req : Request , res : Response , next : NextFunction) {
     const token = req.headers['authorization']
     if(token != null) {
+        try{
         const decoded = jwt.verify(token , secret)
         if(decoded) {
             //@ts-ignore
@@ -15,6 +16,11 @@ export async function authMiddleware(req : Request , res : Response , next : Nex
                 message : "something went wrong"
             })
         }
+    } catch (e) {
+        res.json({
+            error : e
+        })
+    }
     } else {
         res.json({
             message : 'no token provided'
