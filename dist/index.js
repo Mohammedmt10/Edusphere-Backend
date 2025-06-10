@@ -24,6 +24,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const db_2 = require("./db");
 const axios_1 = __importDefault(require("axios"));
 const stripe_1 = __importDefault(require("stripe"));
+const port = 3000;
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 app.use((0, cors_1.default)());
@@ -534,4 +535,4 @@ app.get('/getAdminCourses', middleware_1.authMiddleware, (req, res) => __awaiter
         });
     }
 }));
-app.listen(3000);
+app.listen(port);
