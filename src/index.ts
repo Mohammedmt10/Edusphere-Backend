@@ -340,7 +340,7 @@ app.get('/me' , authMiddleware , async (req , res ) => {
     res.json({user})
 })
 
-app.get('/adminMe' , authMiddleware , async (req , res ) => {
+app.get('/adminMe' , async (req , res ) => {
     //@ts-ignore
     // const userId = req.userId;
 
