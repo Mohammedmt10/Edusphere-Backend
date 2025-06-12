@@ -342,13 +342,12 @@ app.get('/me' , authMiddleware , async (req , res ) => {
 
 app.get('/adminMe' , authMiddleware , async (req , res ) => {
     //@ts-ignore
-    const userId = req.userId;
+    // const userId = req.userId;
 
     try{
         const user = await adminModel.findOne({
-            _id : userId
+            username : 'Mohammed'
         })
-        console.log(user)
         res.json({user})
     } catch (e) {
         res.json({
@@ -360,7 +359,12 @@ app.get('/adminMe' , authMiddleware , async (req , res ) => {
 
 app.post('/createCourse' , authMiddleware  , async (req , res) => {
     //@ts-ignore
-    const userId = req.userId
+    const userId = req.userId;
+    if(!userId) {
+        res.json({
+            message : "admin not logged in"
+        })
+    }
     const requiredBody = z.object({
         title : z.string().min(3),
         description : z.string(),
@@ -588,6 +592,49 @@ app.get('/getAdminCourses' , authMiddleware , async (req , res) => {
     }
     
 });
+
+app.post('/deleteCourse', authMiddleware , async (req , res) => {
+    //@ts-ignore
+    const userId = req.userId;
+    const courseId = req.body.courseId;
+    try {
+        const response = await courseModel.deleteOne({
+            _id : courseId,
+            userId : userId
+        });
+        if(response.deletedCount) {
+            res.json({
+                message : "course has been deleted"
+            })
+        }
+    } catch(e) {
+        res.json({
+            message : "some error occured",
+            error : e
+        })
+    }
+});
+
+app.post('/deleteLecture', authMiddleware , async (req , res) => {
+    //@ts-ignore
+    const userId = req.userId;
+    const lectureId = req.body.lectureId;
+    try {
+        const response = await lectureModel.deleteOne({
+            _id : lectureId
+        });
+        if(response.deletedCount) {
+            res.json({
+                message : "course has been deleted"
+            })
+        }
+    } catch(e) {
+        res.json({
+            message : "some error occured",
+            error : e
+        })
+    }
+})
 
 app.listen(process.env.PORT , () => {
     console.log('listening on port');
