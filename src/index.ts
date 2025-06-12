@@ -343,12 +343,11 @@ app.get('/me' , async (req , res ) => {
 app.get('/adminMe' , async (req , res ) => {
     //@ts-ignore
     // const userId = req.userId;
-    console.log('hi')
     try{
-        const user = await adminModel.findOne({
-            username : 'Mohammed'
-        })
-        res.json({user})
+        // const user = await adminModel.findOne({
+        //     username : 'Mohammed'
+        // })
+        res.json({username : 'Mohammed', _id : '827408170487'})
     } catch (e) {
         res.json({
             message : 'some error'
