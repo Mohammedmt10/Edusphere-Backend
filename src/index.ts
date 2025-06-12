@@ -344,9 +344,7 @@ app.get('/adminMe' , async (req , res ) => {
     //@ts-ignore
     // const userId = req.userId;
     // try{
-        // const user = await adminModel.findOne({
-        //     username : 'Mohammed'
-        // })
+        // 
         res.json({username : 'Mohammed', _id : '827408170487'})
     // } catch (e) {
     //     res.json({
