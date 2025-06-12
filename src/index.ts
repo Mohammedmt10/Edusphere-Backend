@@ -329,7 +329,7 @@ app.post('/adminsignin' , async (req , res , next) => {
 })
 
 
-app.get('/me' , authMiddleware , async (req , res ) => {
+app.get('/me' , async (req , res ) => {
     //@ts-ignore
     const userId = req.userId;
 
@@ -343,7 +343,7 @@ app.get('/me' , authMiddleware , async (req , res ) => {
 app.get('/adminMe' , async (req , res ) => {
     //@ts-ignore
     // const userId = req.userId;
-
+    console.log('hi')
     try{
         const user = await adminModel.findOne({
             username : 'Mohammed'

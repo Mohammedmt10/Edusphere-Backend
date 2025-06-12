@@ -311,7 +311,7 @@ app.post('/adminsignin', (req, res, next) => __awaiter(void 0, void 0, void 0, f
         });
     }
 }));
-app.get('/me', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/me', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
     const user = yield db_1.userModel.findOne({
@@ -319,14 +319,13 @@ app.get('/me', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void
     });
     res.json({ user });
 }));
-app.get('/adminMe', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/adminMe', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
-    const userId = req.userId;
+    // const userId = req.userId;
     try {
         const user = yield db_1.adminModel.findOne({
-            _id: userId
+            username: 'Mohammed'
         });
-        console.log(user);
         res.json({ user });
     }
     catch (e) {
@@ -338,6 +337,11 @@ app.get('/adminMe', middleware_1.authMiddleware, (req, res) => __awaiter(void 0,
 app.post('/createCourse', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
+    if (!userId) {
+        res.json({
+            message: "admin not logged in"
+        });
+    }
     const requiredBody = zod_1.z.object({
         title: zod_1.z.string().min(3),
         description: zod_1.z.string(),
@@ -535,4 +539,49 @@ app.get('/getAdminCourses', middleware_1.authMiddleware, (req, res) => __awaiter
         });
     }
 }));
-app.listen(port);
+app.post('/deleteCourse', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //@ts-ignore
+    const userId = req.userId;
+    const courseId = req.body.courseId;
+    try {
+        const response = yield db_1.courseModel.deleteOne({
+            _id: courseId,
+            userId: userId
+        });
+        if (response.deletedCount) {
+            res.json({
+                message: "course has been deleted"
+            });
+        }
+    }
+    catch (e) {
+        res.json({
+            message: "some error occured",
+            error: e
+        });
+    }
+}));
+app.post('/deleteLecture', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //@ts-ignore
+    const userId = req.userId;
+    const lectureId = req.body.lectureId;
+    try {
+        const response = yield db_2.lectureModel.deleteOne({
+            _id: lectureId
+        });
+        if (response.deletedCount) {
+            res.json({
+                message: "course has been deleted"
+            });
+        }
+    }
+    catch (e) {
+        res.json({
+            message: "some error occured",
+            error: e
+        });
+    }
+}));
+app.listen(process.env.PORT, () => {
+    console.log('listening on port');
+});
