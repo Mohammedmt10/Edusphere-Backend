@@ -321,15 +321,19 @@ app.get('/me', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 }));
 app.get('/adminMe', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
-    // const userId = req.userId;
-    // try{
-    // 
-    res.json({ username: 'Mohammed', _id: '827408170487' });
-    // } catch (e) {
-    //     res.json({
-    //         message : 'some error'
-    //     })
-    // }
+    const userId = req.userId;
+    try {
+        const user = yield db_1.adminModel.findOne({
+            username: 'Mohammed'
+        });
+        console.log(user);
+        res.json({ user });
+    }
+    catch (e) {
+        res.json({
+            message: 'some error'
+        });
+    }
 }));
 app.post('/createCourse', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
