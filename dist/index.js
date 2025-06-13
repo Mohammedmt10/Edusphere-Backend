@@ -369,10 +369,8 @@ app.post('/createCourse', middleware_1.authMiddleware, (req, res) => __awaiter(v
             userId: userId
         });
         if (newCourse) {
-            yield axios_1.default.post('https://edusphere-backend-mww7.onrender.com/buy', {
-                courseId: newCourse._id
-            });
             res.json({
+                _id: newCourse._id,
                 message: 'course created'
             });
         }
