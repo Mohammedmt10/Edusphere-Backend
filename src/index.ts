@@ -395,7 +395,7 @@ app.post('/createCourse' , authMiddleware  , async (req , res) => {
 
         
         if(newCourse) {
-            await axios.post('http://localhost:3000/buy',{
+            await axios.post('https://edusphere-backend-mww7.onrender.com/buy',{
                 courseId : newCourse._id
             });
             res.json({
