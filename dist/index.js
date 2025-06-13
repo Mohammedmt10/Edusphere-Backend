@@ -311,7 +311,7 @@ app.post('/adminsignin', (req, res, next) => __awaiter(void 0, void 0, void 0, f
         });
     }
 }));
-app.get('/me', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/me', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
     const user = yield db_1.userModel.findOne({
@@ -319,12 +319,12 @@ app.get('/me', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     });
     res.json({ user });
 }));
-app.get('/adminMe', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/adminMe', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
     try {
         const user = yield db_1.adminModel.findOne({
-            username: 'Mohammed'
+            _id: userId
         });
         console.log(user);
         res.json({ user });

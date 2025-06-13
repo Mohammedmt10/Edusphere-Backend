@@ -329,7 +329,7 @@ app.post('/adminsignin' , async (req , res , next) => {
 })
 
 
-app.get('/me' , async (req , res ) => {
+app.get('/me' , authMiddleware ,  async (req , res ) => {
     //@ts-ignore
     const userId = req.userId;
 
@@ -340,12 +340,12 @@ app.get('/me' , async (req , res ) => {
     res.json({user})
 })
 
-app.get('/adminMe' , async (req , res ) => {
+app.get('/adminMe' , authMiddleware , async (req , res ) => {
     //@ts-ignore
     const userId = req.userId;
     try{
         const user = await adminModel.findOne({
-            username : 'Mohammed'
+            _id : userId
         })
         console.log(user)
         res.json({user})
