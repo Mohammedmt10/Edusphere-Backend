@@ -52,8 +52,8 @@ app.post('/payment', middleware_1.authMiddleware, (req, res) => __awaiter(void 0
                 }
             ],
             mode: 'payment',
-            success_url: `http://localhost:5173/paymentSuccessfull/{CHECKOUT_SESSION_ID}/${courseId}`,
-            cancel_url: 'http://localhost:5173/',
+            success_url: `https://edusphere-sandy.vercel.app/paymentSuccessfull/{CHECKOUT_SESSION_ID}/${courseId}`,
+            cancel_url: 'https://edusphere-sandy.vercel.app/',
         });
         res.json({ url: session.url });
     }
@@ -326,7 +326,11 @@ app.get('/adminMe', middleware_1.authMiddleware, (req, res) => __awaiter(void 0,
         const user = yield db_1.adminModel.findOne({
             _id: userId
         });
-        console.log(user);
+        if (user == null) {
+            res.json({
+                message: 'user not found'
+            });
+        }
         res.json({ user });
     }
     catch (e) {
@@ -361,22 +365,24 @@ app.post('/createCourse', middleware_1.authMiddleware, (req, res) => __awaiter(v
                 message: "course already exist"
             });
         }
-        const newCourse = yield db_1.courseModel.create({
-            title: data.title,
-            description: data.description,
-            price: data.price,
-            imageUrl: data.imageUrl,
-            userId: userId
-        });
-        if (newCourse) {
+        else {
+            const newCourse = yield db_1.courseModel.create({
+                title: data.title,
+                description: data.description,
+                price: data.price,
+                imageUrl: data.imageUrl,
+                userId: userId
+            });
+            if (newCourse) {
+                res.json({
+                    _id: newCourse._id,
+                    message: 'course created'
+                });
+            }
             res.json({
-                _id: newCourse._id,
-                message: 'course created'
+                message: 'something went wrong'
             });
         }
-        res.json({
-            message: 'something went wrong'
-        });
     }
     else {
         res.json({
@@ -570,7 +576,7 @@ app.post('/deleteLecture', middleware_1.authMiddleware, (req, res) => __awaiter(
         });
         if (response.deletedCount) {
             res.json({
-                message: "course has been deleted"
+                message: "lecture has been deleted"
             });
         }
     }

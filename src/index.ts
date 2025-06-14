@@ -44,8 +44,8 @@ try{
 ],
     
     mode: 'payment',
-    success_url: `http://localhost:5173/paymentSuccessfull/{CHECKOUT_SESSION_ID}/${courseId}`,
-    cancel_url: 'http://localhost:5173/',
+    success_url: `https://edusphere-sandy.vercel.app/paymentSuccessfull/{CHECKOUT_SESSION_ID}/${courseId}`,
+    cancel_url: 'https://edusphere-sandy.vercel.app/',
     });
 
     res.json({url : session.url});
@@ -346,8 +346,12 @@ app.get('/adminMe' , authMiddleware , async (req , res ) => {
     try{
         const user = await adminModel.findOne({
             _id : userId
-        })
-        console.log(user)
+        });
+        if(user == null) {
+            res.json({
+                message : 'user not found'
+            });
+        }
         res.json({user})
     } catch (e) {
         res.json({
@@ -384,26 +388,28 @@ app.post('/createCourse' , authMiddleware  , async (req , res) => {
             res.json({
                 message : "course already exist"
             })
+        }else {
+            const newCourse = await courseModel.create({
+                title : data.title,
+                description : data.description,
+                price : data.price,
+                imageUrl : data.imageUrl,
+                userId : userId
+            });
+            if(newCourse) {
+                
+                res.json({
+                    _id : newCourse._id,
+                    message : 'course created'
+                })
+            }
+            res.json({
+                message : 'something went wrong'
+            })
+
         }
-        const newCourse = await courseModel.create({
-            title : data.title,
-            description : data.description,
-            price : data.price,
-            imageUrl : data.imageUrl,
-            userId : userId
-        });
 
         
-        if(newCourse) {
-            
-            res.json({
-                _id : newCourse._id,
-                message : 'course created'
-            })
-        }
-        res.json({
-            message : 'something went wrong'
-        })
     } else {
         res.json({
             message : 'invalid input'
@@ -624,7 +630,7 @@ app.post('/deleteLecture', authMiddleware , async (req , res) => {
         });
         if(response.deletedCount) {
             res.json({
-                message : "course has been deleted"
+                message : "lecture has been deleted"
             })
         }
     } catch(e) {
