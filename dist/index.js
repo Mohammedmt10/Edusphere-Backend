@@ -319,7 +319,7 @@ app.get('/me', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void
     });
     res.json({ user });
 }));
-app.get('/adminMe', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get('/adminMe', middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //@ts-ignore
     const userId = req.userId;
     try {
