@@ -16,15 +16,22 @@ function authMiddleware(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const token = req.headers['authorization'];
         if (token != null) {
-            const decoded = jwt.verify(token, config_1.secret);
-            if (decoded) {
-                //@ts-ignore
-                req.userId = decoded._id;
-                next();
+            try {
+                const decoded = jwt.verify(token, config_1.secret);
+                if (decoded) {
+                    //@ts-ignore
+                    req.userId = decoded._id;
+                    next();
+                }
+                else {
+                    res.json({
+                        message: "something went wrong"
+                    });
+                }
             }
-            else {
+            catch (e) {
                 res.json({
-                    message: "something went wrong"
+                    error: e
                 });
             }
         }
