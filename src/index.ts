@@ -46,9 +46,9 @@ try{
     cancel_url: 'https://edusphere-sandy.vercel.app/',
     });
 
-    res.json({url : session.url});
+    return res.json({url : session.url});
 }catch (e) {
-    res.status(500).json({
+    return res.status(500).json({
         message : e
     })
 }
@@ -57,19 +57,19 @@ try{
 app.get('/verifyPayment', async (req , res) => {
     const sessionId = req.query.session_id as string
 
-    if(!sessionId) res.json({
+    if(!sessionId) return res.json({
         message : 'no session id provided'
     });
 
     try {
         const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-        res.json({
+        return res.json({
             paymentStatus : session.payment_status,
 
         });
     } catch (e) {
-        res.json({
+        return res.json({
             error : e
         })
     }
@@ -109,7 +109,7 @@ const options = {
 		const response = await axios.request(options);
 		const data = response.data.token;
 
-        res.json({
+        return res.json({
             token : data
         })
 
@@ -137,12 +137,12 @@ try {
         result = await response.json();
         statuscode = result.status_id;
     }
-    res.json({
+    return res.json({
         result
     })
 } catch (error) {
 	console.error({error});
-    res.json({
+    return res.json({
         error
     })
 }
@@ -163,7 +163,7 @@ app.post('/signup' , async (req , res , next) => {
             const sameUser = await userModel.findOne({username : user.username});
 
             if(sameUser) {
-                res.json({
+                return res.json({
                     message : 'user already exist'
                 })
             }
@@ -175,18 +175,18 @@ app.post('/signup' , async (req , res , next) => {
                 password : hashedpassword
             });
 
-            res.json({
+            return res.json({
                 message : 'new user created'
             })
 
         } catch(e) {
-            res.json({
+            return res.json({
                 message : 'some error',
                 error : e
             })
         }
     } else {
-        res.json({
+        return res.json({
             error : safeParsed.error.issues[0].path[0],
             message : 'not passed safely'
         })
@@ -217,26 +217,26 @@ app.post('/signin' , async (req : Request , res : any) => {
                 const token = jwt.sign({
                     _id : user._id
                 } , secret , {expiresIn : '24hr'});
-                res.json({  
+                return res.json({  
                     token : token
                 })
             } else {
-                res.json({
+                return res.json({
                     message : 'incorrect creds'
                 })
             }
         } else {
-            res.json({
+            return res.json({
                 message : "no user found"
             })
         }
     } catch (e) {
-        res.json({
+        return res.json({
             error : e
         })
     }
     } else {
-        res.json({
+        return res.json({
             message : "some error"
         })
     }
@@ -257,7 +257,7 @@ app.post('/adminsignup' , async (req , res , next) => {
             const sameUser = await adminModel.findOne({username : user.username});
 
             if(sameUser) {
-                res.json({
+                return res.json({
                     message : 'admin already exist'
                 })
             }
@@ -269,18 +269,18 @@ app.post('/adminsignup' , async (req , res , next) => {
                 password : hashedpassword
             });
 
-            res.json({
+            return res.json({
                 message : 'new admin created'
             })
 
         } catch(e) {
-            res.json({
+            return res.json({
                 message : 'some error',
                 error : e
             })
         }
     } else {
-        res.json({
+        return res.json({
             error : safeParsed.error.issues[0].path[0],
             message : 'not passed safely'
         })
@@ -306,21 +306,21 @@ app.post('/adminsignin' , async (req , res , next) => {
                 const token = jwt.sign({
                     _id : user._id
                 } , secret , {expiresIn : '24hr'});
-                res.json({  
+                return res.json({  
                     token : token
                 })
             } else {
-                res.json({
+                return res.json({
                     message : 'incorrect creds'
                 })
             }
         } else {
-            res.json({
+            return res.json({
                 message : "no user found"
             })
         }
     } else {
-        res.json({
+        return res.json({
             message : "some error"
         })
     }
@@ -335,7 +335,7 @@ app.get('/me' , authMiddleware ,  async (req , res ) => {
         _id : userId
     })
 
-    res.json({user})
+    return res.json({user})
 })
 
 app.get('/adminMe', authMiddleware , async (req , res ) => {
@@ -346,13 +346,13 @@ app.get('/adminMe', authMiddleware , async (req , res ) => {
             _id : userId
         });
         if(user == null) {
-            res.json({
+            return res.json({
                 message : 'user not found'
             });
         }
-        res.json({user})
+        return res.json({user})
     } catch (e) {
-        res.json({
+        return res.json({
             message : 'some error'
         })
     }
@@ -363,7 +363,7 @@ app.post('/createCourse' , authMiddleware  , async (req , res) => {
     //@ts-ignore
     const userId = req.userId;
     if(!userId) {
-        res.json({
+        return res.json({
             message : "admin not logged in"
         })
     }
@@ -383,7 +383,7 @@ app.post('/createCourse' , authMiddleware  , async (req , res) => {
             title : data.title
         })
         if(response) {
-            res.json({
+            return res.json({
                 message : "course already exist"
             })
         }else {
@@ -396,12 +396,12 @@ app.post('/createCourse' , authMiddleware  , async (req , res) => {
             });
             if(newCourse) {
                 
-                res.json({
+                return res.json({
                     _id : newCourse._id,
                     message : 'course created'
                 })
             }
-            res.json({
+            return res.json({
                 message : 'something went wrong'
             })
 
@@ -409,7 +409,7 @@ app.post('/createCourse' , authMiddleware  , async (req , res) => {
 
         
     } else {
-        res.json({
+        return res.json({
             message : 'invalid input'
         })
     }
@@ -429,12 +429,12 @@ app.get('/purchasedCourses' , authMiddleware , async (req , res) => {
     }])
 
     if(response == null) {
-        res.json({
+        return res.json({
             message : 'no course purchased'
         })
     }
 
-    res.json({
+    return res.json({
         message : response
     })
 })
@@ -445,7 +445,7 @@ app.post('/buy' , authMiddleware , async (req , res ) => {
     const courseId = req.body.courseId;
 
     if(userId == null) {
-        res.json({
+        return res.json({
             message : 'user is not logged in'
         })
     }
@@ -456,7 +456,7 @@ app.post('/buy' , authMiddleware , async (req , res ) => {
     })
     
     if(response) {
-        res.json({
+        return res.json({
             message : 'already purchased'
         });
         return;
@@ -468,7 +468,7 @@ app.post('/buy' , authMiddleware , async (req , res ) => {
     })
 
     if(purchase) {
-        res.json({
+        return res.json({
             message : "purchased"
         })
     }
@@ -477,7 +477,7 @@ app.post('/buy' , authMiddleware , async (req , res ) => {
 app.get('/courses' , async (req , res) => {
     const courses = await courseModel.find({}).populate('userId');
 
-    res.json({
+    return res.json({
         courses : courses
     })
 })
@@ -489,7 +489,7 @@ app.get('/course/:id', async (req , res) => {
         _id : courseId
     })
     
-    res.json({
+    return res.json({
         response
     })
 });
@@ -514,20 +514,20 @@ app.post('/addLecture/:id', async (req , res) => {
                 courseId : courseId
             });
             if(response) {
-                res.json({
+                return res.json({
                     message : 'lecture has been created'
                 })
             } else {
-                res.json({
+                return res.json({
                     message : "lecture not created"
                 });
             }
         } catch(e) {
-            res.json({message : 'some error ocured'})
+            return res.json({message : 'some error ocured'})
         }
 
     } else {
-        res.json({
+        return res.json({
             message : "invalid input"
         })
     }
@@ -544,7 +544,7 @@ app.get('/getLectures/:id', authMiddleware , async (req , res) => {
     });
 
     if(!isUser) {
-        res.json({
+        return res.json({
             message : 'user has not purchased the course'
         });
     }
@@ -554,11 +554,11 @@ app.get('/getLectures/:id', authMiddleware , async (req , res) => {
     });
 
     if(lectures) {
-            res.json({
+            return res.json({
                 lectures
         })
     } else {
-        res.json({
+        return res.json({
             message : 'something went wrong'
         })
     }
@@ -571,9 +571,9 @@ app.get('/lecture/:id' , authMiddleware , async (req , res) => {
         _id : lectureId
     })
 
-    if(!lecture) res.json({message : 'invalid lecturecode'})
+    if(!lecture) return res.json({message : 'invalid lecturecode'})
 
-    res.json({
+    return res.json({
         lecture
     });
 });
@@ -585,11 +585,11 @@ app.get('/getAdminCourses' , authMiddleware , async (req , res) => {
         const courses = await courseModel.find({
             userId : adminId
         });
-        res.json({
+        return res.json({
             courses
         });
     } catch (error) {
-        res.json({
+        return res.json({
             message : 'some error ocurred'
         })
     }
@@ -606,12 +606,12 @@ app.post('/deleteCourse', authMiddleware , async (req , res) => {
             userId : userId
         });
         if(response.deletedCount) {
-            res.json({
+            return res.json({
                 message : "course has been deleted"
             })
         }
     } catch(e) {
-        res.json({
+        return res.json({
             message : "some error occured",
             error : e
         })
@@ -627,12 +627,12 @@ app.post('/deleteLecture', authMiddleware , async (req , res) => {
             _id : lectureId
         });
         if(response.deletedCount) {
-            res.json({
+            return res.json({
                 message : "lecture has been deleted"
             })
         }
     } catch(e) {
-        res.json({
+        return res.json({
             message : "some error occured",
             error : e
         })
