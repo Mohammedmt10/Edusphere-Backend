@@ -1,33 +1,35 @@
-import { NextFunction, Request, Response } from "express";
-const jwt = require("jsonwebtoken")
+import { RequestHandler } from "express";
+import jwt from "jsonwebtoken";
 import { secret } from "./config";
 
-export async function authMiddleware(req : Request , res : Response , next : NextFunction) {
-    const token = req.headers['authorization']
-    if(token != null) {
-        try{
-        const decoded = jwt.verify(token , secret)
-        if(decoded) {
-            if(typeof decoded == "string") {
-                return res.json({
-                  message : "incorrect token"
-                });
-            }
-            req.userId = decoded._id;
-            next();
-        } else {
-            res.json({
-                message : "something went wrong"
-            })
-        }
-    } catch (e) {
-        res.json({
-            error : e
-        })
+declare global {
+  namespace Express {
+    interface Request {
+      userId: string;
     }
-    } else {
-        res.json({
-            message : 'no token provided'
-        })
-    }
+  }
 }
+
+export const authMiddleware: RequestHandler = async (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    res.status(401).json({ message: "no token provided" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, secret);
+
+    if (typeof decoded === "string") {
+      res.status(401).json({ message: "incorrect token" });
+      return;
+    }
+
+    req.userId = decoded._id;
+    next();
+
+  } catch (error) {
+    res.status(401).json({ message: "invalid token" });
+  }
+};

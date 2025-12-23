@@ -8,37 +8,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authMiddleware = authMiddleware;
-const jwt = require("jsonwebtoken");
+exports.authMiddleware = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("./config");
-function authMiddleware(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const token = req.headers['authorization'];
-        if (token != null) {
-            try {
-                const decoded = jwt.verify(token, config_1.secret);
-                if (decoded) {
-                    //@ts-ignore
-                    req.userId = decoded._id;
-                    next();
-                }
-                else {
-                    res.json({
-                        message: "something went wrong"
-                    });
-                }
-            }
-            catch (e) {
-                res.json({
-                    error: e
-                });
-            }
+const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = req.headers.authorization;
+    if (!token) {
+        res.status(401).json({ message: "no token provided" });
+        return;
+    }
+    try {
+        const decoded = jsonwebtoken_1.default.verify(token, config_1.secret);
+        if (typeof decoded === "string") {
+            res.status(401).json({ message: "incorrect token" });
+            return;
         }
-        else {
-            res.json({
-                message: 'no token provided'
-            });
-        }
-    });
-}
+        req.userId = decoded._id;
+        next();
+    }
+    catch (error) {
+        res.status(401).json({ message: "invalid token" });
+    }
+});
+exports.authMiddleware = authMiddleware;
