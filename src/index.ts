@@ -16,9 +16,7 @@ const app = express();
 
 dotenv.config();
 app.use(cors());
-const stripe = new Stripe(process.env.STRIPE_API_KEY || '' , {
-    apiVersion: "2025-05-28.basil",
-});
+const stripe = new Stripe(process.env.STRIPE_API_KEY || '');
 app.use(express.json());
 
 app.post('/payment', authMiddleware , async (req , res) => {
