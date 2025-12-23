@@ -639,6 +639,4 @@ app.post('/deleteLecture', authMiddleware , async (req , res) => {
     }
 })
 
-app.listen(process.env.PORT , () => {
-    console.log('listening on port');
-});
+export default app
