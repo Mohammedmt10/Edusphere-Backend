@@ -8,7 +8,11 @@ export async function authMiddleware(req : Request , res : Response , next : Nex
         try{
         const decoded = jwt.verify(token , secret)
         if(decoded) {
-            //@ts-ignore
+            if(typeof decoded == "string") {
+                return res.json({
+                  message : "incorrect token"
+                });
+            }
             req.userId = decoded._id;
             next();
         } else {
